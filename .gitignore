@@ -1,0 +1,33 @@
+.dccache
+
+# Logs
+logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Dependencies
+node_modules/
+
+# Coverage
+coverage/
+.nyc_output/
+
+# Tool caches
+.cache/
+.eslintcache
+.pnpm-store/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Package archives
+*.tgz

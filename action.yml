@@ -1,0 +1,60 @@
+name: Automerge
+description: Safely merge eligible pull requests after their visible checks and statuses are green.
+author: Liran Tal
+branding:
+  icon: git-merge
+  color: green
+
+inputs:
+  github-token:
+    description: GitHub token used to read pull requests/checks/statuses and merge pull requests.
+    required: false
+    default: ${{ github.token }}
+  merge-method:
+    description: Merge method to use. One of merge, squash, or rebase.
+    required: false
+    default: squash
+  label:
+    description: Pull request label required for automerge when require-label is true.
+    required: false
+    default: automerge
+  require-label:
+    description: Require the configured label before attempting to merge.
+    required: false
+    default: "true"
+  allow-forks:
+    description: Allow merging pull requests whose head branch is from a fork.
+    required: false
+    default: "false"
+  green-observations-required:
+    description: Number of consecutive green observations required before merging.
+    required: false
+    default: "4"
+  poll-interval-seconds:
+    description: Seconds to wait between observations while checks are still pending.
+    required: false
+    default: "60"
+  timeout-seconds:
+    description: Maximum seconds to wait for a stable green state before failing.
+    required: false
+    default: "3600"
+  ignored-check-names:
+    description: Comma-separated check run names to ignore when deciding if the pull request is green.
+    required: false
+    default: automerge,Automerge
+
+outputs:
+  merged:
+    description: Whether the action merged the pull request.
+  reason:
+    description: The merge or skip reason.
+  pull-request-number:
+    description: Pull request number considered by the action.
+  head-sha:
+    description: Pull request head SHA considered by the action.
+  merge-sha:
+    description: SHA returned by GitHub when a pull request is merged.
+
+runs:
+  using: node24
+  main: dist/index.js

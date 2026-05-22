@@ -1,0 +1,47 @@
+{
+  "name": "github-action-automerge",
+  "version": "0.0.0",
+  "private": true,
+  "description": "A conservative GitHub Action for automatically merging eligible pull requests.",
+  "type": "module",
+  "main": "dist/index.js",
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc --noEmit",
+    "format": "prettier --check .",
+    "format:write": "prettier --write .",
+    "lint": "eslint .",
+    "package": "ncc build src/index.ts --source-map --license licenses.txt --out dist",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "all": "pnpm lint && pnpm typecheck && pnpm test && pnpm package"
+  },
+  "keywords": [
+    "actions",
+    "automerge",
+    "github-action",
+    "pull-request"
+  ],
+  "author": "Liran Tal",
+  "license": "Apache-2.0",
+  "engines": {
+    "node": ">=24"
+  },
+  "packageManager": "pnpm@11.2.2",
+  "dependencies": {
+    "@actions/core": "3.0.1",
+    "@actions/github": "9.1.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@types/node": "25.9.1",
+    "@vercel/ncc": "0.38.4",
+    "eslint": "10.4.0",
+    "prettier": "3.8.3",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.59.4",
+    "vitest": "4.1.7"
+  }
+}
