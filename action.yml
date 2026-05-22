@@ -1,4 +1,4 @@
-name: Automerge
+name: Automerge on Green Checks
 description: Safely merge eligible pull requests after their visible checks and statuses are green.
 author: Liran Tal
 branding:
