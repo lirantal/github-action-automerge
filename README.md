@@ -119,7 +119,7 @@ This repository uses Node.js 24 and pnpm 11.
 
 ```bash
 corepack enable
-corepack prepare pnpm@11.2.2 --activate
+corepack prepare pnpm@11.25.0 --activate
 pnpm install
 pnpm all
 ```
