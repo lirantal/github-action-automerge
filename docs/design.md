@@ -40,7 +40,7 @@ Ineligible pull requests are skipped without failing the workflow.
 
 The action reads both commit statuses and check runs for the pull request head SHA.
 
-Statuses must have `state: success`. Check runs must have `status: completed` and `conclusion: success`. Any other visible state resets the green observation counter.
+Statuses must have `state: success`. Check runs must have `status: completed` and a conclusion of `success`, `neutral`, or `skipped`, matching GitHub required status checks. Any other visible state resets the green observation counter.
 
 Ignored check names are removed before evaluation. If no statuses or non-ignored check runs remain, the pull request is not green.
 

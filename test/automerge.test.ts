@@ -164,6 +164,39 @@ describe("runAutomerge", () => {
     expect(client.mergeCalls).toHaveLength(1);
   });
 
+  it("merges after repeated green observations with a neutral reviewer check", async () => {
+    const client = new FakeGitHubClient();
+    client.pullRequestResponses = [pullRequest(), pullRequest()];
+    const snapshot: CheckSnapshot = {
+      statuses: [],
+      checkRuns: [
+        { name: "CI", status: "completed", conclusion: "success" },
+        {
+          name: "cubic · AI code reviewer",
+          status: "completed",
+          conclusion: "neutral",
+        },
+        { name: "Automerge", status: "in_progress", conclusion: null },
+      ],
+    };
+    client.checkSnapshots = [snapshot, snapshot];
+    const clock = new TestClock();
+
+    const result = await runAutomerge({
+      client,
+      context: pullRequestContext(),
+      inputs: inputs({ greenObservationsRequired: 2 }),
+      logger: new TestLogger(),
+      clock,
+    });
+
+    expect(result.merged).toBe(true);
+    expect(client.mergeCalls).toEqual([
+      { number: 123, sha: "head-sha", mergeMethod: "squash" },
+    ]);
+    expect(clock.sleeps).toEqual([1000]);
+  });
+
   it("does not merge when the pull request head changes after checks pass", async () => {
     const client = new FakeGitHubClient();
     client.pullRequestResponses = [
@@ -219,26 +252,6 @@ describe("evaluateCheckSnapshot", () => {
       "ci: pending",
     ],
     [
-      "skipped check",
-      {
-        statuses: [],
-        checkRuns: [
-          { name: "test", status: "completed", conclusion: "skipped" },
-        ],
-      },
-      "test: completed / skipped",
-    ],
-    [
-      "neutral check",
-      {
-        statuses: [],
-        checkRuns: [
-          { name: "test", status: "completed", conclusion: "neutral" },
-        ],
-      },
-      "test: completed / neutral",
-    ],
-    [
       "in-progress check",
       {
         statuses: [],
@@ -251,6 +264,57 @@ describe("evaluateCheckSnapshot", () => {
 
     expect(result.green).toBe(false);
     expect(result.problems).toContain(problem);
+  });
+
+  it.each(["success", "neutral", "skipped"])(
+    "accepts a completed %s check",
+    (conclusion) => {
+      expect(
+        evaluateCheckSnapshot(
+          {
+            statuses: [],
+            checkRuns: [{ name: "review", status: "completed", conclusion }],
+          },
+          [],
+        ).green,
+      ).toBe(true);
+    },
+  );
+
+  it.each(["queued", "in_progress"])(
+    "rejects a %s check even with an acceptable conclusion",
+    (status) => {
+      for (const conclusion of ["success", "neutral", "skipped"]) {
+        expect(
+          evaluateCheckSnapshot(
+            {
+              statuses: [],
+              checkRuns: [{ name: "review", status, conclusion }],
+            },
+            [],
+          ).green,
+        ).toBe(false);
+      }
+    },
+  );
+
+  it.each([
+    "failure",
+    "cancelled",
+    "timed_out",
+    "action_required",
+    "stale",
+    null,
+  ])("rejects a completed check with conclusion %s", (conclusion) => {
+    expect(
+      evaluateCheckSnapshot(
+        {
+          statuses: [],
+          checkRuns: [{ name: "test", status: "completed", conclusion }],
+        },
+        [],
+      ).green,
+    ).toBe(false);
   });
 
   it("ignores configured check names", () => {
