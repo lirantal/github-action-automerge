@@ -55,7 +55,8 @@ Add the `automerge` label to a pull request. When all visible statuses and check
 - Pull requests must have the configured label unless `require-label` is disabled.
 - Pull requests from forks are skipped unless `allow-forks` is enabled.
 - A pull request with zero visible statuses/check runs is never treated as green.
-- Pending, failed, cancelled, timed-out, skipped, neutral, queued, and in-progress checks are not treated as green.
+- Completed check runs with `success`, `neutral`, or `skipped` conclusions are treated as green, matching GitHub required status checks.
+- Pending, failed, cancelled, timed-out, action-required, stale, queued, and in-progress checks are not treated as green.
 - The action refreshes the pull request before merging and passes the checked head SHA to GitHub's merge API.
 
 ## Inputs

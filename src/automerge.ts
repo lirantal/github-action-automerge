@@ -206,7 +206,8 @@ export function evaluateCheckSnapshot(
   );
   const nonSuccessCheckRuns = checkRuns.filter(
     (checkRun) =>
-      checkRun.status !== "completed" || checkRun.conclusion !== "success",
+      checkRun.status !== "completed" ||
+      !["success", "neutral", "skipped"].includes(checkRun.conclusion ?? ""),
   );
 
   if (snapshot.statuses.length === 0 && checkRuns.length === 0) {

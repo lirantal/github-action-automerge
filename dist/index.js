@@ -36488,7 +36488,8 @@ function evaluateCheckSnapshot(snapshot, ignoredCheckNames) {
     const ignored = new Set(ignoredCheckNames);
     const checkRuns = snapshot.checkRuns.filter((checkRun) => !ignored.has(checkRun.name));
     const nonSuccessStatuses = snapshot.statuses.filter((status) => status.state !== "success");
-    const nonSuccessCheckRuns = checkRuns.filter((checkRun) => checkRun.status !== "completed" || checkRun.conclusion !== "success");
+    const nonSuccessCheckRuns = checkRuns.filter((checkRun) => checkRun.status !== "completed" ||
+        !["success", "neutral", "skipped"].includes(checkRun.conclusion ?? ""));
     if (snapshot.statuses.length === 0 && checkRuns.length === 0) {
         return {
             green: false,
