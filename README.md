@@ -59,6 +59,14 @@ Add the `automerge` label to a pull request. When all visible statuses and check
 - Pending, failed, cancelled, timed-out, action-required, stale, queued, and in-progress checks are not treated as green.
 - The action refreshes the pull request before merging and passes the checked head SHA to GitHub's merge API.
 
+## Scope and Limitations
+
+The default `GITHUB_TOKEN` can merge ordinary pull requests when its permissions and repository rules allow it. Pull requests that change files under `.github/workflows/`, including Dependabot updates to GitHub Actions, require a separate credential authorized to modify workflows. The same automerge configuration can therefore merge a package update and fail on a workflow update.
+
+Green checks establish check readiness; GitHub still enforces token permissions, branch protection, rulesets, required reviews, and allowed merge methods at merge time. This action calls the merge API directly and does not enable GitHub's built-in auto-merge or bypass repository rules.
+
+See the [workflow-file credential workaround](docs/permissions.md#pull-requests-that-change-workflow-files) and [troubleshooting guide](docs/troubleshooting.md).
+
 ## Inputs
 
 - `github-token`: GitHub token used to read pull requests, checks, statuses, and merge pull requests. Defaults to `${{ github.token }}`.
@@ -110,6 +118,7 @@ Shorten the stability window:
 
 - [Usage](docs/usage.md)
 - [Permissions](docs/permissions.md)
+- [Troubleshooting](docs/troubleshooting.md)
 - [Security](docs/security.md)
 - [Design](docs/design.md)
 
